@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wordpress-rss-archiver"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["yzqzss <yzqzss@yandex.com>"]
 readme = "README.md"

@@ -13,7 +13,7 @@ def arg_parser():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('FEED_URL', help='RSS feed URL (http?://example.com/feed)')
-    parser.add_argument('--ia-s3', help='IA s3 API KEYS (access_key:secret_key) (get from https://archive.org/account/s3.php)')
+    parser.add_argument('--ia-s3', help='IA s3 API KEYS (access_key:secret_key) (get from https://archive.org/account/s3.php)', required=True)
     parser.add_argument('--debug', action='store_true')
     return parser.parse_args()
 
@@ -33,6 +33,7 @@ def main():
     feed_url = sess.head(feed_url).url
 
     pid=0
+    urls_archived = set()
     while True:
         pid += 1
         print('pid:', pid)
@@ -49,6 +50,10 @@ def main():
         feed = feedparser.parse(data)
         items: List = feed["items"]
 
+        if len(items) == 0:
+            print('No more items, something is wrong?')
+            break
+
         for item in items:
             print("============")
 
@@ -61,7 +66,10 @@ def main():
             item_url_raw = item["link"]
             item_url = urljoin(feed_url, item_url_raw)
             print('item_url:', item_url)
-            
+
+            if item_url in urls_archived:
+                print('Already archived, skip. (or maybe we are in a loop?)') 
+
             time_p: time.struct_time = item["published_parsed"]
             try:
                 print('format_time:', datetime.datetime(*time_p[:6]).isoformat()) # type: ignore
@@ -71,6 +79,7 @@ def main():
             print('Submitting to SPN ...')
 
             spn2api.take_snapshot(item_url)
+            urls_archived.add(item_url)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
