@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "wordpress-rss-archiver"
+version = "0.1.0"
+description = ""
+authors = ["yzqzss <yzqzss@yandex.com>"]
+readme = "README.md"
+packages = [{include = "wordpress_rss_archiver"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.30.0"
+feedparser = "^6.0.10"
+# markdownify = "^0.11.6"
+# bs4 = "^0.0.1"
+
+[tool.poetry.scripts]
+wordpress-rss-archiver = "wordpress_rss_archiver.wordpress_rss_archiver:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
